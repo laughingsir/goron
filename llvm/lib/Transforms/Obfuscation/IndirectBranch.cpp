@@ -16,6 +16,13 @@
 #define DEBUG_TYPE "indbr"
 
 using namespace llvm;
+
+static cl::opt<int> indbrP("indbrP",
+                                cl::desc("indbr prob"),
+                                cl::value_desc("null"),
+                                cl::init(50),
+                                cl::Optional);
+
 namespace {
 struct IndirectBranch : public FunctionPass {
   static char ID;
@@ -90,7 +97,7 @@ struct IndirectBranch : public FunctionPass {
 
 
   bool runOnFunction(Function &Fn) override {
-    if (!toObfuscate(flag, &Fn, "indbr")) {
+    if (!toObfuscate(flag, &Fn, "indbr", indbrP)) {
       return false;
     }
 

@@ -11,6 +11,13 @@
 #define DEBUG_TYPE "indgv"
 
 using namespace llvm;
+
+static cl::opt<int> indgvP("indgvP",
+                           cl::desc("indgv prob"),
+                           cl::value_desc("null"),
+                           cl::init(50),
+                           cl::Optional);
+
 namespace {
 struct IndirectGlobalVariable : public FunctionPass {
   static char ID;
@@ -71,7 +78,7 @@ struct IndirectGlobalVariable : public FunctionPass {
   }
 
   bool runOnFunction(Function &Fn) override {
-    if (!toObfuscate(flag, &Fn, "indgv")) {
+    if (!toObfuscate(flag, &Fn, "indgv", indgvP)) {
       return false;
     }
 

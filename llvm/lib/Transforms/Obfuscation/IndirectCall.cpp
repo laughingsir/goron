@@ -15,6 +15,13 @@
 #define DEBUG_TYPE "icall"
 
 using namespace llvm;
+
+static cl::opt<int> icallP("icallP",
+                           cl::desc("icall prob"),
+                           cl::value_desc("null"),
+                           cl::init(50),
+                           cl::Optional);
+
 namespace {
 struct IndirectCall : public FunctionPass {
   static char ID;
@@ -86,7 +93,7 @@ struct IndirectCall : public FunctionPass {
 
 
   bool runOnFunction(Function &Fn) override {
-    if (!toObfuscate(flag, &Fn, "icall")) {
+    if (!toObfuscate(flag, &Fn, "icall", icallP)) {
       return false;
     }
 

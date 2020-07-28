@@ -27,6 +27,12 @@ using namespace llvm;
 // Stats
 STATISTIC(Flattened, "Functions flattened");
 
+static cl::opt<int> cffP("cffP",
+                         cl::desc("cff prob"),
+                         cl::value_desc("null"),
+                         cl::init(50),
+                         cl::Optional);
+
 namespace {
 struct Flattening : public FunctionPass {
   static char ID;  // Pass identification, replacement for typeid
@@ -54,15 +60,14 @@ struct Flattening : public FunctionPass {
 }
 
 bool Flattening::runOnFunction(Function &F) {
-  Function *tmp = &F;
-  // Do we obfuscate
-  if (toObfuscate(flag, tmp, "fla")) {
-    if (flatten(tmp)) {
-      ++Flattened;
+    Function *tmp = &F;
+    // Do we obfuscate
+    if (toObfuscate(flag, tmp, "fla", cffP)) {
+        if (flatten(tmp)) {
+            ++Flattened;
+        }
     }
-  }
-
-  return false;
+    return false;
 }
 
 bool Flattening::flatten(Function *f) {
@@ -89,11 +94,14 @@ bool Flattening::flatten(Function *f) {
   // Save all original BB
   for (Function::iterator i = f->begin(); i != f->end(); ++i) {
     BasicBlock *tmp = &*i;
+      if (tmp->isEHPad() || tmp->isLandingPad()) {
+          return false;
+      }
     origBB.push_back(tmp);
 
     BasicBlock *bb = &*i;
-    if (isa<InvokeInst>(bb->getTerminator())) {
-      return false;
+    if (!isa<BranchInst>(bb->getTerminator()) && !isa<ReturnInst>(bb->getTerminator())) {
+        return false;
     }
   }
 

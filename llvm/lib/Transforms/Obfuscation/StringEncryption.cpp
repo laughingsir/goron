@@ -18,6 +18,13 @@
 #define DEBUG_TYPE "string-encryption"
 
 using namespace llvm;
+
+static cl::opt<int> cseP("cseP",
+                         cl::desc("icall prob"),
+                         cl::value_desc("null"),
+                         cl::init(100),
+                         cl::Optional);
+
 namespace {
 struct StringEncryption : public ModulePass {
   static char ID;
@@ -358,7 +365,7 @@ void StringEncryption::lowerGlobalConstantStruct(ConstantStruct *CS, IRBuilder<>
 }
 
 bool StringEncryption::processConstantStringUse(Function *F) {
-  if (!toObfuscate(flag, F, "cse")) {
+  if (!toObfuscate(flag, F, "cse", cseP)) {
     return false;
   }
   if (Options && Options->skipFunction(F->getName())) {

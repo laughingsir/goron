@@ -1,8 +1,20 @@
+#include <random>
 #include "llvm/Transforms/Obfuscation/Utils.h"
 #include "llvm/IR/InstIterator.h"
 #include "llvm/IR/Intrinsics.h"
 #include "llvm/IR/IntrinsicInst.h"
 #include "llvm/IR/IRBuilder.h"
+using std::default_random_engine;
+
+static cl::opt<bool> printRandNum("print_rand_num",
+                                  cl::desc("打印随机数"),
+                                  cl::value_desc("null"),
+                                  cl::init(false));
+
+static cl::opt<bool> isUnity("unity",
+                                  cl::desc("是否是unity工程"),
+                                  cl::value_desc("null"),
+                                  cl::init(false));
 
 // Shamefully borrowed from ../Scalar/RegToMem.cpp :(
 bool valueEscapes(Instruction *Inst) {
@@ -98,7 +110,7 @@ std::string readAnnotate(Function *f) {
   return annotation;
 }
 
-bool toObfuscate(bool flag, Function *f, std::string attribute) {
+bool toObfuscate(bool flag, Function *f, std::string attribute, int prob) {
   std::string attr = attribute;
   std::string attrNo = "no" + attr;
 
@@ -126,6 +138,15 @@ bool toObfuscate(bool flag, Function *f, std::string attribute) {
 
   // If fla flag is set
   if (flag == true) {
+    std::random_device rd;
+    std::default_random_engine engine(rd());
+    std::uniform_int_distribution<> dis(0, 99);
+    auto dice = std::bind(dis, engine);
+    auto ans = dice();
+    if(printRandNum) {
+      errs() << "random number = " << ans << "," << prob << "," << 0 << "," << 99 << "\n";
+    }
+    return ans <= prob && checkName(f->getParent()->getName(), f->getName(), attribute);
     /* Check if the number of applications is correct
     if (!((Percentage > 0) && (Percentage <= 100))) {
       LLVMContext &ctx = llvm::getGlobalContext();
@@ -141,10 +162,25 @@ bool toObfuscate(bool flag, Function *f, std::string attribute) {
       return true;
     }
     */
-    return true;
   }
 
   return false;
+}
+
+bool checkName(StringRef moduleName, StringRef functionName, std::string attribute) {
+    if (isUnity) {
+        if (moduleName.find(".cpp") != std::string::npos) {
+            if (moduleName.find("Assembly-CSharp") != std::string::npos &&
+                functionName.find("1Il2Cpp") == std::string::npos) {
+                errs() << "run " << attribute << " on " << moduleName << "#" << functionName << "\n";
+                return true;
+            }
+            errs() << "skip " << attribute << " on " << moduleName << "#" << functionName << "\n";
+            return false;
+        }
+    }
+    errs() << "run " << attribute << " on " << moduleName << "#" << functionName << "\n";
+    return true;
 }
 
 void LowerConstantExpr(Function &F) {
