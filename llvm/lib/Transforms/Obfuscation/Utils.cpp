@@ -146,7 +146,7 @@ bool toObfuscate(bool flag, Function *f, std::string attribute, int prob) {
     if(printRandNum) {
       errs() << "random number = " << ans << "," << prob << "," << 0 << "," << 99 << "\n";
     }
-    return ans <= prob && checkName(f->getParent()->getName(), f->getName(), attribute);
+    return ans < prob && checkName(f->getParent()->getName(), f->getName(), attribute);
     /* Check if the number of applications is correct
     if (!((Percentage > 0) && (Percentage <= 100))) {
       LLVMContext &ctx = llvm::getGlobalContext();
@@ -172,6 +172,13 @@ bool checkName(StringRef moduleName, StringRef functionName, std::string attribu
         if (moduleName.find(".cpp") != std::string::npos) {
             if (moduleName.find("Assembly-CSharp") != std::string::npos &&
                 functionName.find("1Il2Cpp") == std::string::npos) {
+                errs() << "run " << attribute << " on " << moduleName << "#" << functionName << "\n";
+                return true;
+            }
+            errs() << "skip " << attribute << " on " << moduleName << "#" << functionName << "\n";
+            return false;
+        }else if (moduleName.find(".mm") != std::string::npos) {
+            if (moduleName.find("FBUnity") == std::string::npos) {
                 errs() << "run " << attribute << " on " << moduleName << "#" << functionName << "\n";
                 return true;
             }

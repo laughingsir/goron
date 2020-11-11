@@ -101,6 +101,10 @@ struct StringEncryption : public ModulePass {
 
 char StringEncryption::ID = 0;
 bool StringEncryption::runOnModule(Module &M) {
+    if(M.getName().find("FBUnity") != std::string::npos){
+        errs() << "skip " << "cse" << " on " << M.getName() << "\n";
+        return false;
+    }
   std::set<GlobalVariable *> ConstantStringUsers;
 
   // collect all c strings
