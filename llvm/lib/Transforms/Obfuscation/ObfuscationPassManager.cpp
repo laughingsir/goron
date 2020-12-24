@@ -12,26 +12,26 @@
 using namespace llvm;
 
 static cl::opt<bool>
-    EnableIRObfusaction("irobf", cl::init(false), cl::NotHidden,
+    EnableIRObfusaction("aobf", cl::init(false), cl::NotHidden,
                         cl::desc("Enable IR Code Obfuscation."));
 static cl::opt<bool>
-    EnableIndirectBr("irobf-indbr", cl::init(false), cl::NotHidden,
+    EnableIndirectBr("aobf-br", cl::init(false), cl::NotHidden,
                      cl::desc("Enable IR Indirect Branch Obfuscation."));
 
 static cl::opt<bool>
-    EnableIndirectCall("irobf-icall", cl::init(false), cl::NotHidden,
+    EnableIndirectCall("aobf-fc", cl::init(false), cl::NotHidden,
                      cl::desc("Enable IR Indirect Call Obfuscation."));
 
 static cl::opt<bool>
-    EnableIndirectGV("irobf-indgv", cl::init(false), cl::NotHidden,
+    EnableIndirectGV("aobf-gv", cl::init(false), cl::NotHidden,
                        cl::desc("Enable IR Indirect Global Variable Obfuscation."));
 
 static cl::opt<bool>
-    EnableIRFlattening("irobf-cff", cl::init(false), cl::NotHidden,
+    EnableIRFlattening("aobf-fla", cl::init(false), cl::NotHidden,
                      cl::desc("Enable IR Control Flow Flattening Obfuscation."));
 
 static cl::opt<bool>
-    EnableIRStringEncryption("irobf-cse", cl::init(false), cl::NotHidden,
+    EnableIRStringEncryption("aobf-se", cl::init(false), cl::NotHidden,
                        cl::desc("Enable IR Constant String Encryption."));
 
 static cl::opt<std::string>
@@ -137,5 +137,5 @@ struct ObfuscationPassManager : public ModulePass {
 
 char ObfuscationPassManager::ID = 0;
 ModulePass *llvm::createObfuscationPassManager() { return new ObfuscationPassManager(); }
-INITIALIZE_PASS_BEGIN(ObfuscationPassManager, "irobf", "Enable IR Obfuscation", false, false)
-INITIALIZE_PASS_END(ObfuscationPassManager, "irobf", "Enable IR Obfuscation", false, false)
+INITIALIZE_PASS_BEGIN(ObfuscationPassManager, "aobf", "Enable IR Obfuscation", false, false)
+INITIALIZE_PASS_END(ObfuscationPassManager, "aobf", "Enable IR Obfuscation", false, false)

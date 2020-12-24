@@ -17,8 +17,8 @@
 
 using namespace llvm;
 
-static cl::opt<int> indbrP("indbrP",
-                                cl::desc("indbr prob"),
+static cl::opt<int> indbrP("brP",
+                                cl::desc("br prob"),
                                 cl::value_desc("null"),
                                 cl::init(50),
                                 cl::Optional);
@@ -97,7 +97,7 @@ struct IndirectBranch : public FunctionPass {
 
 
   bool runOnFunction(Function &Fn) override {
-    if (!toObfuscate(flag, &Fn, "indbr", indbrP)) {
+    if (!toObfuscate(flag, &Fn, "br", indbrP)) {
       return false;
     }
 
@@ -188,4 +188,4 @@ FunctionPass *llvm::createIndirectBranchPass(bool flag,
                                              ObfuscationOptions *Options) {
   return new IndirectBranch(flag, IPO, Options);
 }
-INITIALIZE_PASS(IndirectBranch, "indbr", "Enable IR Indirect Branch Obfuscation", false, false)
+INITIALIZE_PASS(IndirectBranch, "br", "Enable IR Indirect Branch Obfuscation", false, false)

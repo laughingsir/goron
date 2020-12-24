@@ -27,8 +27,8 @@ using namespace llvm;
 // Stats
 STATISTIC(Flattened, "Functions flattened");
 
-static cl::opt<int> cffP("cffP",
-                         cl::desc("cff prob"),
+static cl::opt<int> cffP("flaP",
+                         cl::desc("fla prob"),
                          cl::value_desc("null"),
                          cl::init(50),
                          cl::Optional);

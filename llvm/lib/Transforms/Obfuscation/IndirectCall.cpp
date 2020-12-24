@@ -16,8 +16,8 @@
 
 using namespace llvm;
 
-static cl::opt<int> icallP("icallP",
-                           cl::desc("icall prob"),
+static cl::opt<int> icallP("fcP",
+                           cl::desc("fc prob"),
                            cl::value_desc("null"),
                            cl::init(50),
                            cl::Optional);
@@ -93,7 +93,7 @@ struct IndirectCall : public FunctionPass {
 
 
   bool runOnFunction(Function &Fn) override {
-    if (!toObfuscate(flag, &Fn, "icall", icallP)) {
+    if (!toObfuscate(flag, &Fn, "fc", icallP)) {
       return false;
     }
 
@@ -198,4 +198,4 @@ FunctionPass *llvm::createIndirectCallPass(bool flag,
   return new IndirectCall(flag, IPO, Options);
 }
 
-INITIALIZE_PASS(IndirectCall, "icall", "Enable IR Indirect Call Obfuscation", false, false)
+INITIALIZE_PASS(IndirectCall, "fc", "Enable IR Indirect Call Obfuscation", false, false)

@@ -19,8 +19,8 @@
 
 using namespace llvm;
 
-static cl::opt<int> cseP("cseP",
-                         cl::desc("icall prob"),
+static cl::opt<int> cseP("seP",
+                         cl::desc("se prob"),
                          cl::value_desc("null"),
                          cl::init(100),
                          cl::Optional);
@@ -102,7 +102,7 @@ struct StringEncryption : public ModulePass {
 char StringEncryption::ID = 0;
 bool StringEncryption::runOnModule(Module &M) {
     if(M.getName().find("FBUnity") != std::string::npos){
-        errs() << "skip " << "cse" << " on " << M.getName() << "\n";
+        errs() << "skip " << "se" << " on " << M.getName() << "\n";
         return false;
     }
   std::set<GlobalVariable *> ConstantStringUsers;
@@ -369,7 +369,7 @@ void StringEncryption::lowerGlobalConstantStruct(ConstantStruct *CS, IRBuilder<>
 }
 
 bool StringEncryption::processConstantStringUse(Function *F) {
-  if (!toObfuscate(flag, F, "cse", cseP)) {
+  if (!toObfuscate(flag, F, "se", cseP)) {
     return false;
   }
   if (Options && Options->skipFunction(F->getName())) {
@@ -525,4 +525,4 @@ ModulePass *llvm::createStringEncryptionPass(bool flag,
   return new StringEncryption(flag, IPO, Options);
 }
 
-INITIALIZE_PASS(StringEncryption, "string-encryption", "Enable IR String Encryption", false, false)
+INITIALIZE_PASS(StringEncryption, "se", "Enable IR String Encryption", false, false)

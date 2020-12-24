@@ -12,8 +12,8 @@
 
 using namespace llvm;
 
-static cl::opt<int> indgvP("indgvP",
-                           cl::desc("indgv prob"),
+static cl::opt<int> indgvP("gvP",
+                           cl::desc("gv prob"),
                            cl::value_desc("null"),
                            cl::init(50),
                            cl::Optional);
@@ -78,7 +78,7 @@ struct IndirectGlobalVariable : public FunctionPass {
   }
 
   bool runOnFunction(Function &Fn) override {
-    if (!toObfuscate(flag, &Fn, "indgv", indgvP)) {
+    if (!toObfuscate(flag, &Fn, "gv", indgvP)) {
       return false;
     }
 
@@ -188,4 +188,4 @@ FunctionPass *llvm::createIndirectGlobalVariablePass(bool flag,
   return new IndirectGlobalVariable(flag, IPO, Options);
 }
 
-INITIALIZE_PASS(IndirectGlobalVariable, "indgv", "Enable IR Indirect Global Variable Obfuscation", false, false)
+INITIALIZE_PASS(IndirectGlobalVariable, "gv", "Enable IR Indirect Global Variable Obfuscation", false, false)
